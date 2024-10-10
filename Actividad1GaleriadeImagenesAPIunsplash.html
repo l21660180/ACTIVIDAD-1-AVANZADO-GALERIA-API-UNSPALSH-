@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Imágenes Aleatorias</title>
+    <style>
+        /* Estilos globales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            /* Aplica box-sizing y resetea margen y padding para todos los elementos */
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Fuente elegante y legible */
+            background-color: #f8c8d1;
+            /* Color de fondo rosa */
+            color: #333;
+            /* Color de texto oscuro para contraste */
+            text-align: center;
+            /* Centra el texto */
+            padding: 20px;
+            /* Añade espacio alrededor del contenido */
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            /* Tamaño de fuente grande para el título */
+            color: #444;
+            /* Color gris para el título */
+            margin-bottom: 20px;
+            /* Margen inferior para espaciarlo del siguiente elemento */
+        }
+
+        /* Estilo del contenedor */
+        .container {
+            max-width: 1200px;
+            /* Ancho máximo del contenedor */
+            margin: 0 auto;
+            /* Centra el contenedor */
+        }
+
+        /* Galería de imágenes */
+        .gallery {
+            display: grid;
+            /* Utiliza el diseño de cuadrícula (grid) */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            /* Define un número de columnas flexible */
+            gap: 20px;
+            /* Espacio entre las imágenes */
+            padding: 20px;
+            /* Espaciado interno dentro de la galería */
+        }
+
+        .gallery img {
+            width: 100%;
+            /* La imagen ocupa todo el ancho de su contenedor */
+            height: auto;
+            /* Mantiene la proporción de la imagen */
+            object-fit: cover;
+            /* Asegura que las imágenes se recorten sin deformarse */
+            border-radius: 15px;
+            /* Bordes redondeados para las imágenes */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            /* Sombra sutil para dar un efecto elevado */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            /* Transiciones suaves al hacer hover */
+        }
+
+        .gallery img:hover {
+            transform: scale(1.05);
+            /* Aumenta el tamaño de la imagen ligeramente al pasar el ratón */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            /* Aumenta la sombra al hacer hover */
+        }
+
+        /* Botón para cargar imágenes nuevas */
+        button {
+            background-color: #4A90E2;
+            /* Color de fondo azul */
+            color: white;
+            /* Texto en blanco */
+            padding: 15px 30px;
+            /* Relleno alrededor del texto del botón */
+            border: none;
+            /* Sin borde */
+            border-radius: 30px;
+            /* Bordes redondeados */
+            font-size: 1rem;
+            /* Tamaño de fuente del botón */
+            cursor: pointer;
+            /* Cambia el cursor a mano al pasar sobre el botón */
+            margin-bottom: 20px;
+            /* Espaciado inferior */
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            /* Suaviza las transiciones de color y movimiento */
+        }
+
+        button:hover {
+            background-color: #357ABD;
+            /* Cambia el color de fondo al pasar el ratón */
+            transform: translateY(-3px);
+            /* Eleva el botón ligeramente al pasar el ratón */
+        }
+
+        button:active {
+            background-color: #2C6BA1;
+            /* Cambia el color al hacer clic */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Galería de Imágenes Aleatorias</h1>
+        <!-- Título principal de la página -->
+
+        <button id="load-images-btn">Cargar Imágenes Nuevas</button>
+        <!-- Botón para cargar nuevas imágenes aleatorias -->
+
+        <div class="gallery" id="gallery"></div>
+        <!-- Contenedor de la galería de imágenes, donde se mostrarán las imágenes -->
+    </div>
+
+    <script>
+        const apiKey = 'fyW_FvSQvkESykAXfyqPMuetwDNzyGVfbsV6npYFC-w'; 
+        // Clave de API de Unsplash (debe ser reemplazada por tu propia Access Key)
+
+        const galleryElement = document.getElementById('gallery');
+        // Selecciona el contenedor de la galería de imágenes
+
+        const loadImagesBtn = document.getElementById('load-images-btn');
+        // Selecciona el botón de cargar imágenes nuevas
+
+        // Función para obtener imágenes aleatorias desde la API de Unsplash
+        async function fetchRandomImages() {
+            const url = `https://api.unsplash.com/photos/random?client_id=${apiKey}&count=6`; 
+            // Solicita 6 imágenes aleatorias usando la clave de API
+
+            try {
+                const response = await fetch(url);
+                // Espera la respuesta de la API
+
+                const data = await response.json();
+                // Convierte la respuesta en formato JSON
+
+                displayImages(data);
+                // Llama a la función para mostrar las imágenes
+            } catch (error) {
+                console.error('Error al obtener las imágenes:', error);
+                // Captura y muestra cualquier error en la consola
+            }
+        }
+
+        // Función para mostrar las imágenes en el contenedor de la galería
+        function displayImages(images) {
+            galleryElement.innerHTML = ''; 
+            // Limpia el contenido anterior del contenedor de la galería
+
+            images.forEach(image => {
+                // Recorre cada imagen recibida
+
+                const imgElement = document.createElement('img');
+                // Crea un elemento de imagen HTML
+
+                imgElement.src = image.urls.regular;
+                // Asigna la URL de la imagen como fuente
+
+                imgElement.alt = image.alt_description || 'Imagen aleatoria';
+                // Establece una descripción alternativa (alt) de la imagen
+
+                galleryElement.appendChild(imgElement);
+                // Añade la imagen al contenedor de la galería
+            });
+        }
+
+        // Evento que carga imágenes cuando se hace clic en el botón
+        loadImagesBtn.addEventListener('click', fetchRandomImages);
+
+        // Cargar imágenes aleatorias al iniciar la página
+        fetchRandomImages();
+    </script>
+
+</body>
+</html>
